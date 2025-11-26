@@ -164,7 +164,7 @@ class FICNN(hk.Module):
                     ConvexLinear(
                         output_size=output_size,
                         with_linear=linear_final,
-                        with_bias=bias_final and bias_final,
+                        with_bias=with_bias and bias_final,
                         transform=transform,
                         w_init=w_init,
                         b_init=b_init,
