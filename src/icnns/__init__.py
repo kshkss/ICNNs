@@ -159,12 +159,11 @@ class FICNN(hk.Module):
                             name=f"linear_{index}",
                         )
                     )
-            elif index == (len(output_sizes) - 1):
+            elif index < len(output_sizes) - 1:
                 layers.append(
                     ConvexLinear(
                         output_size=output_size,
-                        with_linear=linear_final,
-                        with_bias=with_bias and bias_final,
+                        with_bias=with_bias,
                         transform=transform,
                         w_init=w_init,
                         b_init=b_init,
@@ -175,10 +174,11 @@ class FICNN(hk.Module):
                 layers.append(
                     ConvexLinear(
                         output_size=output_size,
+                        with_linear=linear_final,
+                        with_bias=with_bias and bias_final,
+                        transform=transform,
                         w_init=w_init,
                         b_init=b_init,
-                        with_bias=with_bias,
-                        transform=transform,
                         name=f"linear_{index}",
                     )
                 )
