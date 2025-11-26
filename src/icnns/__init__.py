@@ -76,6 +76,7 @@ class ConvexLinear(hk.Module):
 
         if self.with_linear:
             self.linear_input_size = y.shape[-1]
+            w_init = self.w_init
             if w_init is None:
                 stddev = 1.0 / np.sqrt(self.linear_input_size)
                 w_init = hk.initializers.TruncatedNormal(stddev=stddev)
