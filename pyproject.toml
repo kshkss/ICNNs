@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Akishika, Issui", email = "kshkss@users.noreply.github.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "dm-haiku>=0.0.15",
     "jax>=0.8.1",
