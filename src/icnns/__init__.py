@@ -15,6 +15,7 @@ class Linear(eqx.Module):
     weight_y: jax.Array | None
     bias: jax.Array | None
     input_size: int = eqx.field(static=True)
+    linear_input_size: int | None = eqx.field(static=True)
     output_size: int = eqx.field(static=True)
     with_linear: bool = eqx.field(static=True)
     with_bias: bool = eqx.field(static=True)
