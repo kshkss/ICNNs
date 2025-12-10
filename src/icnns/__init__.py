@@ -49,11 +49,19 @@ class Linear(eqx.Module):
         self.with_linear = with_linear
         self.with_bias = with_bias
 
-        key1, key2 = jax.random.split(key, 2)
+        key1, key2, key3 = jax.random.split(key, 3)
 
-        stddev = 1.0 / np.sqrt(input_size)
+        fan = input_size + (linear_input_size if linear_input_size is not None else 0)
+        stddev = jnp.sqrt(2.0 / fan)
+        mean = jnp.sqrt(2.0 / jnp.pi) * stddev
+        sigma = jnp.sqrt(stddev**2 - mean**2)
+        lower = -mean / sigma
+        upper = jnp.inf
         self.weight_z = (
-            jax.random.normal(key1, shape=(input_size, output_size)) * stddev
+            jax.random.truncated_normal(
+                key1, lower=lower, upper=upper, shape=(input_size, output_size)
+            )
+            * sigma
         )
 
         if with_linear:
@@ -61,13 +69,12 @@ class Linear(eqx.Module):
                 raise ValueError(
                     "linear_input_size must be provided when with_linear is True."
                 )
-            stddev = 1.0 / np.sqrt(linear_input_size)
             self.weight_y = (
                 jax.random.normal(key2, shape=(linear_input_size, output_size)) * stddev
             )
 
             if with_bias:
-                self.bias = jnp.zeros((output_size,))
+                self.bias = jax.random.normal(key3, shape=(output_size,))
             else:
                 self.bias = None
         else:
