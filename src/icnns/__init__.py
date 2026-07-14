@@ -1,4 +1,4 @@
-from typing import Callable, Iterable
+from typing import Callable
 import jax
 import jaxtyping
 from jax import lax
@@ -159,7 +159,8 @@ class ConvexLinear(eqx.Module):
         if self.with_convex_funcs:
             fan_conv = self.convex_input_size
             stddev = jnp.sqrt(2.0 / fan_conv)
-            t = (1.0 + jnp.sqrt(1.0 + 4.0 * stddev)) / 2.0
+            # (e^(sigma_v^2) - 1) * e^(sigma_v^2) = stddev^2
+            t = (1.0 + jnp.sqrt(1.0 + 4.0 * stddev**2)) * 0.5
             sigma_v = jnp.sqrt(jnp.log(t))
             self.weight_z = (
                 jax.random.normal(
@@ -168,7 +169,7 @@ class ConvexLinear(eqx.Module):
                 * sigma_v
             )
 
-            mu_w = jnp.exp((sigma_v**2) / 2.0)
+            mu_w = jnp.exp((sigma_v**2) * 0.5)
             b_val = -fan_conv * mu_w
         else:
             self.weight_z = None
