@@ -175,6 +175,14 @@ class ConvexLinear(eqx.Module):
             self.weight_z = None
             b_val = 0.0
 
+        if with_bias:
+            self.bias = b_val + jax.random.normal(key3, shape=(self.output_size,))
+            mu_y = 0.0
+        else:
+            self.bias = None
+            # If there is no bias term, assume input x is a simplex variable sampled from a uniform distribution.
+            mu_y = b_val
+
         if self.with_linear:
             fan = self.linear_input_size
             stddev = jnp.sqrt(2.0 / fan)
@@ -183,15 +191,10 @@ class ConvexLinear(eqx.Module):
                     key2, shape=(self.linear_input_size, self.output_size)
                 )
                 * stddev
-            )
+            ) + mu_y
 
         else:
             self.weight_y = None
-
-        if with_bias:
-            self.bias = b_val + jax.random.normal(key3, shape=(self.output_size,))
-        else:
-            self.bias = None
 
     def __call__(
         self,
